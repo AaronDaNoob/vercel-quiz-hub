@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Hub - Comprehensive Quiz Application</title>
+  <style>
+    :root {
+      /* Primitive Color Tokens */
+      --color-white: rgba(255, 255, 255, 1);
+      --color-black: rgba(0, 0, 0, 1);
+      --color-cream-50: rgba(252, 252, 249, 1);
+      --color-cream-100: rgba(255, 255, 253, 1);
+      --color-gray-200: rgba(245, 245, 245, 1);
+      --color-gray-300: rgba(167, 169, 169, 1);
+      --color-gray-400: rgba(119, 124, 124, 1);
+      --color-slate-500: rgba(98, 108, 113, 1);
+      --color-brown-600: rgba(94, 82, 64, 1);
+      --color-charcoal-700: rgba(31, 33, 33, 1);
+      --color-charcoal-800: rgba(38, 40, 40, 1);
+      --color-slate-900: rgba(19, 52, 59, 1);
+      --color-teal-300: rgba(50, 184, 198, 1);
+      --color-teal-400: rgba(45, 166, 178, 1);
+      --color-teal-500: rgba(33, 128, 141, 1);
+      --color-teal-600: rgba(29, 116, 128, 1);
+      --color-teal-700: rgba(26, 104, 115, 1);
+      --color-teal-800: rgba(41, 150, 161, 1);
+      --color-red-400: rgba(255, 84, 89, 1);
+      --color-red-500: rgba(192, 21, 47, 1);
+      --color-orange-400: rgba(230, 129, 97, 1);
+      --color-orange-500: rgba(168, 75, 47, 1);
+
+      /* Custom dark theme colors */
+      --bg-primary: #0f172a;
+      --bg-secondary: #020617;
+      --bg-surface: #1e293b;
+      --border-color: #334155;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --accent-cyan: #06b6d4;
+      --success-green: #10b981;
+      --error-red: #ef4444;
+      --warning-yellow: #f59e0b;
+
+      /* Typography */
+      --font-family-base: "FKGroteskNeue", "Geist", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-size-xs: 11px;
+      --font-size-sm: 12px;
+      --font-size-base: 14px;
+      --font-size-lg: 16px;
+      --font-size-xl: 18px;
+      --font-size-2xl: 20px;
+      --font-size-3xl: 24px;
+      --font-weight-normal: 400;
+      --font-weight-medium: 500;
+      --font-weight-semibold: 550;
+      --font-weight-bold: 600;
+
+      /* Spacing */
+      --space-4: 4px;
+      --space-8: 8px;
+      --space-12: 12px;
+      --space-16: 16px;
+      --space-20: 20px;
+      --space-24: 24px;
+      --space-32: 32px;
+
+      /* Border Radius */
+      --radius-sm: 6px;
+      --radius-base: 8px;
+      --radius-md: 10px;
+      --radius-lg: 12px;
+
+      /* Transitions */
+      --duration-fast: 150ms;
+      --duration-normal: 250ms;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-family-base);
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.5;
+      font-size: var(--font-size-base);
+      min-height: 100vh;
+    }
+
+    .app-container {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      width: 280px;
+      background-color: var(--bg-secondary);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .sidebar-header {
+      padding: var(--space-24) var(--space-20);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .sidebar-header h1 {
+      font-size: 40px;
+      font-weight: 800;
+      color: var(--accent-cyan);
+      margin: 0;
+    }
+
+    .sidebar-filters {
+      padding: var(--space-16);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .filter-group {
+      margin-bottom: var(--space-12);
+    }
+
+    .filter-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .filter-group label {
+      display: block;
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--text-secondary);
+      margin-bottom: var(--space-4);
+    }
+
+    .filter-group select {
+      width: 100%;
+      padding: var(--space-8) var(--space-12);
+      background-color: var(--bg-surface);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-base);
+      font-size: var(--font-size-base);
+      cursor: pointer;
+      transition: border-color var(--duration-fast);
+    }
+
+    .filter-group select:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
+    }
+
+    .quizzes-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--space-16);
+    }
+
+    .quiz-item {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-base);
+      padding: var(--space-12);
+      margin-bottom: var(--space-12);
+      cursor: pointer;
+      transition: all var(--duration-fast);
+    }
+
+    .quiz-item:hover {
+      border-color: var(--accent-cyan);
+      transform: translateY(-2px);
+    }
+
+    .quiz-item.active {
+      border-color: var(--accent-cyan);
+      background-color: rgba(6, 182, 212, 0.1);
+    }
+
+    .quiz-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: var(--space-8);
+    }
+
+    .quiz-item-title {
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-semibold);
+      color: var(--text-primary);
+      margin-bottom: var(--space-4);
+    }
+
+    .quiz-item-description {
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      margin-bottom: var(--space-8);
+    }
+
+    .quiz-item-meta {
+      display: flex;
+      gap: var(--space-8);
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px var(--space-8);
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+    }
+
+    .badge-subject {
+      background-color: var(--subject-bg-color, rgba(139, 92, 246, 0.2));
+      color: var(--subject-text-color, #a78bfa);
+    }
+
+    .badge-unit {
+      background-color: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+    }
+
+    .badge-questions {
+      background-color: rgba(6, 182, 212, 0.2);
+      color: var(--accent-cyan);
+    }
+
+    /* Main Content Styles */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border-color);
+      background-color: var(--bg-secondary);
+    }
+
+    .tab {
+      padding: var(--space-16) var(--space-24);
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-medium);
+      color: var(--text-secondary);
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: all var(--duration-fast);
+    }
+
+    .tab:hover {
+      color: var(--text-primary);
+    }
+
+    .tab.active {
+      color: var(--accent-cyan);
+      border-bottom-color: var(--accent-cyan);
+    }
+
+    .tab-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--space-32);
+    }
+
+    .tab-pane {
+      display: none;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    /* Quiz Content Styles */
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-24);
+    }
+
+    .quiz-title {
+      font-size: var(--font-size-3xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--text-primary);
+    }
+
+    .progress-badge {
+      padding: var(--space-8) var(--space-16);
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-base);
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-semibold);
+      color: var(--accent-cyan);
+    }
+
+    .timer {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+      padding: var(--space-8) var(--space-16);
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-base);
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-medium);
+      color: var(--text-secondary);
+    }
+
+    .question-card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: var(--space-24);
+      margin-bottom: var(--space-24);
+    }
+
+    .question-text {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-semibold);
+      color: var(--text-primary);
+      margin-bottom: var(--space-24);
+    }
+
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-12);
+    }
+
+    .option-item {
+      display: flex;
+      align-items: center;
+      padding: var(--space-16);
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-base);
+      cursor: pointer;
+      transition: all var(--duration-fast);
+    }
+
+    .option-item:hover {
+      border-color: var(--accent-cyan);
+      background-color: rgba(6, 182, 212, 0.05);
+    }
+
+    .option-item.selected {
+      border-color: var(--accent-cyan);
+      background-color: rgba(6, 182, 212, 0.1);
+    }
+
+    .option-item input[type="radio"] {
+      margin-right: var(--space-12);
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .option-item label {
+      flex: 1;
+      font-size: var(--font-size-base);
+      color: var(--text-primary);
+      cursor: pointer;
+    }
+
+    .summary-box {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: var(--space-32);
+      margin-bottom: var(--space-24);
+      text-align: center;
+    }
+
+    .summary-title {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--text-primary);
+      margin-bottom: var(--space-24);
+    }
+
+    .summary-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: var(--space-16);
+      margin-bottom: var(--space-24);
+    }
+
+    .stat-item {
+      background-color: var(--bg-primary);
+      padding: var(--space-16);
+      border-radius: var(--radius-base);
+    }
+
+    .stat-label {
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      margin-bottom: var(--space-4);
+    }
+
+    .stat-value {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--text-primary);
+    }
+
+    .stat-value.success {
+      color: var(--success-green);
+    }
+
+    .stat-value.error {
+      color: var(--error-red);
+    }
+
+    .controls {
+      display: flex;
+      gap: var(--space-12);
+      justify-content: center;
+    }
+
+    .btn {
+      padding: var(--space-12) var(--space-24);
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-medium);
+      border-radius: var(--radius-base);
+      border: none;
+      cursor: pointer;
+      transition: all var(--duration-fast);
+    }
+
+    .btn-primary {
+      background-color: var(--accent-cyan);
+      color: var(--bg-primary);
+    }
+
+    .btn-primary:hover {
+      background-color: #0891b2;
+    }
+
+    .btn-secondary {
+      background-color: var(--bg-surface);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--border-color);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: var(--space-32);
+      color: var(--text-secondary);
+    }
+
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: var(--space-16);
+    }
+
+    .empty-state-title {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-semibold);
+      color: var(--text-primary);
+      margin-bottom: var(--space-8);
+    }
+
+    /* Progress Tab Styles */
+    .progress-section {
+      margin-bottom: var(--space-32);
+    }
+
+    .progress-section-title {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--text-primary);
+      margin-bottom: var(--space-16);
+    }
+
+    .progress-card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: var(--space-20);
+      margin-bottom: var(--space-16);
+    }
+
+    .progress-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-12);
+    }
+
+    .progress-card-title {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      color: var(--text-primary);
+    }
+
+    .progress-counter {
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-medium);
+      color: var(--accent-cyan);
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 8px;
+      background-color: var(--bg-primary);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      margin-bottom: var(--space-8);
+    }
+
+    .progress-bar {
+      height: 100%;
+      background-color: var(--accent-cyan);
+      transition: width var(--duration-normal);
+    }
+
+    .progress-bar.success {
+      background-color: var(--success-green);
+    }
+
+    .progress-bar.error {
+      background-color: var(--error-red);
+    }
+
+    .progress-percentage {
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+    }
+
+    /* Scrollbar Styles */
+    .quizzes-list::-webkit-scrollbar,
+    .tab-content::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .quizzes-list::-webkit-scrollbar-track,
+    .tab-content::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+
+    .quizzes-list::-webkit-scrollbar-thumb,
+    .tab-content::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: var(--radius-sm);
+    }
+
+    .quizzes-list::-webkit-scrollbar-thumb:hover,
+    .tab-content::-webkit-scrollbar-thumb:hover {
+      background: var(--text-secondary);
+    }
+  
+.review-section {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-24);
+  margin-top: var(--space-24);
+}
+.review-question {
+  margin-bottom: var(--space-20);
+  padding: var(--space-16);
+  border-radius: var(--radius-base);
+  border: 1px solid var(--border-color);
+}
+.correct-answer {
+  background-color: rgba(16,185,129,0.2);
+  border-left: 4px solid #10b981;
+}
+.wrong-answer {
+  background-color: rgba(239,68,68,0.2);
+  border-left: 4px solid #ef4444;
+}
+
+</style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1>Quiz Hub</h1>
+      </div>
+      <div class="sidebar-filters">
+        <div class="filter-group">
+          <label for="subject-filter">Subject</label>
+          <select id="subject-filter">
+            <option value="all">All Subjects</option>
+            <option value="Chemistry">Chemistry</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="unit-filter">Unit</label>
+          <select id="unit-filter">
+            <option value="all">All Units</option>
+          </select>
+        </div>
+      </div>
+      <div class="quizzes-list" id="quizzes-list">
+        <!-- Quiz items will be dynamically inserted here -->
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="tabs">
+        <button class="tab active" data-tab="quiz">Quiz</button>
+        <button class="tab" data-tab="progress">Progress</button>
+      </div>
+
+      <div class="tab-content">
+        <!-- Quiz Tab -->
+        <div class="tab-pane active" id="quiz-tab">
+          <div id="quiz-content">
+            <div class="empty-state">
+              <div class="empty-state-icon">📝</div>
+              <div class="empty-state-title">Select a Quiz to Begin</div>
+              <p>Choose a quiz from the sidebar to start your learning journey</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress Tab -->
+        <div class="tab-pane" id="progress-tab">
+          <div class="progress-section">
+            <h2 class="progress-section-title">Your Progress</h2>
+            <div id="progress-content">
+              <!-- Progress cards will be dynamically inserted here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Subject colors mapping
+    const subjectColors = {
+      'Electrical Engineering': { primary: '#a855f7', background: 'rgba(168, 85, 247, 0.2)' },
+      'Power Systems': { primary: '#f97316', background: 'rgba(249, 115, 22, 0.2)' },
+      'Mechanical Engineering': { primary: '#ec4899', background: 'rgba(236, 72, 153, 0.2)' },
+      'Programming': { primary: '#10b981', background: 'rgba(16, 185, 129, 0.2)' },
+      'Chemistry': { primary: '#ec5296', background: 'rgba(236, 82, 150, 0.2)' }
+    };
+
+
+
+    // Quiz Data
+    const quizData = [
+      {
+        id: 'chem-unit1',
+        name: 'Electrode &amp; Energy Systems',
+        description: 'Electrodes, galvanic cells, calomel electrode, batteries, photovoltaic cells',
+        level: 'Medium',
+        subject: 'Chemistry',
+        unit: 1,
+        questions: [
+          { text: "Q1: In a galvanic cell, anode is ___", options: ["positive terminal", "negative terminal", "neutral", "depends on type"], answerIndex: 1 },
+          { text: "Q2: An electrode is considered as a cathode when it has ___", options: ["High reduction potential", "Low reduction potential", "High oxidation potential", "Zero potential"], answerIndex: 0 },
+          { text: "Q3: A working concentration cell is made of two half cells having ___", options: ["Identical electrolytes and identical concentrations", "Identical electrolytes but different concentrations", "Different electrolytes and identical concentrations", "Different electrolytes and different concentrations"], answerIndex: 1 },
+          { text: "Q4: Electrode potential of calomel electrode ___", options: ["Varies directly with concentration of KCl", "Varies inversely with concentration of KCl", "Is independent of concentration of KCl", "Depends only on concentration of calomel"], answerIndex: 1 },
+          { text: "Q5: When clubbed with copper electrode, calomel electrode acts as ___", options: ["Anode", "Cathode", "Either as anode or cathode", "Auxiliary electrode"], answerIndex: 0 },
+          { text: "Q6: A calomel electrode is an example for ___", options: ["Reference electrode", "Ion selective electrode", "Inert electrode", "Gas electrode"], answerIndex: 0 },
+          { text: "Q7: The calomel electrode is represented as ___", options: ["Hg | Hg2Cl2 (s) | KCl (saturated or standard)", "Ag | AgCl (s) | KCl (saturated)", "Hg | HgCl2 (s) | KCl (saturated or standard)", "Ag | AgCl (s) | HCl (0.1M) | glass"], answerIndex: 0 },
+          { text: "Q8: Which is the sparingly soluble salt present in calomel electrode?", options: ["HgCl", "Hg2Cl2", "KCl", "HgCl2"], answerIndex: 1 },
+          { text: "Q9: EMF of electrolyte concentration cell is independent of ___", options: ["Number of electrons involved", "Temperature", "Standard electrode potential of electrode", "Electrolyte concentration"], answerIndex: 2 },
+          { text: "Q10: The potential of the calomel electrode depends on the concentration of ___", options: ["Hg", "Hg2Cl2", "KOH", "KCl"], answerIndex: 3 },
+          { text: "Q11: What is the electrode potential of the calomel electrode with saturated KCl solution at 298K?", options: ["0.334 V", "0.281 V", "0.242 V", "0.0591 V"], answerIndex: 2 },
+          { text: "Q12: The reference electrode that can be used to determine the potential of zinc electrode is ___", options: ["Glass electrode", "Platinum electrode", "Copper electrode", "Calomel electrode"], answerIndex: 3 },
+          { text: "Q13: A glass electrode is commonly used to measure ___", options: ["Oxidation potential", "Reduction potential", "pH of a solution", "Conductivity of a solution"], answerIndex: 2 },
+          { text: "Q14: Glass electrode is sensitive to ___ ions", options: ["Sodium", "Hydrogen", "Chloride", "Hydroxide"], answerIndex: 1 },
+          { text: "Q15: Which of the following is an example for ion selective electrode?", options: ["Platinum electrode", "Gas electrode", "Calomel electrode", "Glass electrode"], answerIndex: 3 },
+          { text: "Q16: Identify which of the following statement/s does/do not hold true for glass electrode?", options: ["Only (i)", "Only (ii)", "Both (i) and (iii)", "Both (ii) and (iii)"], answerIndex: 0 },
+          { text: "Q17: Which of the following is an example for working concentration cell?", options: ["Fe|FeSO4(0.10M) ||CuSO4(0.10M) |Cu", "Mg|Mg2+(aq) || Cd2+(aq) |Cd", "Ag|AgNO3 (0.10M) ||AgNO3 (0.50M) |Ag", "Fe | Fe2+(0.015M) || Ag+(0.13M) |Ag"], answerIndex: 2 },
+          { text: "Q18: Among the below given statements, which of them are true for concentration cell?", options: ["(i), (ii) and (iii)", "(i) and (ii)", "(ii) and (iii)", "(i) and (iii)"], answerIndex: 3 },
+          { text: "Q19: The EMF of the concentration cell Ag(s)|Ag+(0.05M) ||Ag+(0.05M)|Ag at 298ºK is ___", options: ["0.0591V", "0.02955V", "0V", "-0.0591V"], answerIndex: 2 },
+          { text: "Q20: The number of galvanic cells, each of 1.1 V, required to construct a 11 V battery is ___", options: ["15", "22", "11", "10"], answerIndex: 3 },
+          { text: "Q21: Which of the following is not a component of a battery?", options: ["Cathode", "Salt-bridge", "Anode", "Electrolyte"], answerIndex: 1 },
+          { text: "Q22: Which of the following is not a feature of secondary batteries?", options: ["Rechargeable", "Long-lasting when charged", "Non-rechargeable", "Can be used after recharging"], answerIndex: 2 },
+          { text: "Q23: ___ is used as anode material in commercial lithium-ion batteries", options: ["Lithium intercalated in Graphite layers", "Silicon", "Lithiated metal oxides", "Platinum"], answerIndex: 0 },
+          { text: "Q24: The role of polypropylene separator in lithium-ion battery is to ___", options: ["Block the flow of Ions", "Allow the free flow of ions", "Allow the free flow of electrons", "Block the flow of electrons"], answerIndex: 1 },
+          { text: "Q25: In lithium-ion battery, the electrolyte used is ___", options: ["Polar solvent", "Non-polar solvent", "Lithium salts dissolved in polar solvent", "Lithium salts dissolved in non-polar solvent"], answerIndex: 3 },
+          { text: "Q26: Special properties of 'Li' metal that make it advantageous as an electrode material include ___", options: ["Light weight", "Low electrical conductivity", "High electrode potential", "Low cost"], answerIndex: 0 },
+          { text: "Q27: The process during charging of a Li-ion battery involves ___", options: ["Li⁺ ions moving from cathode to anode", "Li⁺ ions moving from anode to cathode", "H+ moving from cathode to anode", "H+ moving from anode to cathode"], answerIndex: 0 },
+          { text: "Q28: In flow batteries, the electro-active material is stored in ___", options: ["Electrode", "Electrolyte", "Separator", "Membrane"], answerIndex: 1 },
+          { text: "Q29: Identify the incorrect statement for vanadium redox flow battery", options: ["The redox reactions involve vanadium in different oxidation states", "The electrolytes are stored externally and pumped through the cell", "The energy is stored in the electrode material", "The electrolytes are rechargeable"], answerIndex: 2 },
+          { text: "Q30: In a vanadium redox flow battery, the electrolyte contains ___", options: ["Vanadium ions of same oxidation states", "Vanadium ions in different oxidation states", "Lithium ions", "Copper ions"], answerIndex: 1 },
+          { text: "Q31: Which ion pair is used in the negative half-cell of a vanadium redox flow battery?", options: ["V³⁺/V²⁺", "V⁵⁺/V⁴⁺", "Fe³⁺/Fe²⁺", "Cu²⁺/Cu⁺"], answerIndex: 0 },
+          { text: "Q32: In VRFBs, the battery energy and capacity depend on ___", options: ["Electrode material only", "The volume and concentration of electrolytes", "The size of the membrane", "The temperature of operation"], answerIndex: 1 },
+          { text: "Q33: Photovoltaic cells convert ___ energy to ___ energy", options: ["Chemical; Electrical", "Electrical; Chemical", "Solar; Electrical", "Electrical; Solar"], answerIndex: 2 },
+          { text: "Q34: The most commonly used semiconductor material in commercial solar cells is ___", options: ["Gallium arsenide (GaAs)", "Silicon (Si)", "Cadmium sulfide (CdS)", "Germanium (Ge)"], answerIndex: 1 },
+          { text: "Q35: The working principle of PV cell is based on ___", options: ["Ohm's law", "Nernst Equation", "Newtons laws", "Photoelectric effect"], answerIndex: 3 },
+          { text: "Q36: Which of the following statement/s is/are true?", options: ["Only (i)", "Only (ii)", "Both (i) and (ii)", "Neither (i) nor (ii)"], answerIndex: 1 },
+          { text: "Q37: Which of the following property makes it easy to purify silane and chlorosilanes?", options: ["High density", "High boiling point", "Volatility", "Magnetic property"], answerIndex: 2 },
+          { text: "Q38: Which compound is formed when silane is pyrolyzed at 600–900℃?", options: ["SiO2", "Silicon nitride", "Trichlorosilane", "Polysilicon"], answerIndex: 3 }
+        ]
+      },
+      {
+        id: 'chem-unit2',
+        name: 'Corrosion Science &amp; Metal Finishing',
+        description: 'Corrosion types, protection methods, electroplating, electroless plating, anodization',
+        level: 'Medium',
+        subject: 'Chemistry',
+        unit: 2,
+        questions: [
+          { text: "Q1: Identify the incorrect statement about corrosion", options: ["(ii) and (iii)", "(i) and (ii)", "Only (iii)", "Only (i)"], answerIndex: 0 },
+          { text: "Q2: Situation favorable for dry corrosion is ___", options: ["Presence of moisture", "Presence of conducting electrolyte", "Presence of oxygen or other gases", "Presence of non-polar liquids"], answerIndex: 2 },
+          { text: "Q3: Reduction of water/moisture in presence of oxygen leads to the formation of ___", options: ["Hydrogen gas only", "Hydroxyl ions only", "Both hydrogen gas and hydroxyl ions", "Oxide anions"], answerIndex: 1 },
+          { text: "Q4: Corrosion that takes place when two dissimilar metals are coupled is known as ___", options: ["Galvanic corrosion", "Dry corrosion", "Pitting corrosion", "Passivation"], answerIndex: 0 },
+          { text: "Q5: Which statement holds true for Galvanic Corrosion?", options: ["More cathodic metal gets corroded", "Less noble metal gets corroded", "The metal having higher standard reduction potential gets corroded", "The metal placed lower in galvanic series get corroded"], answerIndex: 1 },
+          { text: "Q6: A steel tank fitted with a copper tap undergoes corrosion because ___", options: ["Electrode potential of both metals are almost equal", "Steel acts as an anode and corrodes due to galvanic action", "Steel is susceptible to water", "Copper acts as an anode and corrodes"], answerIndex: 1 },
+          { text: "Q7: In differential aeration corrosion, ___", options: ["Oxygen-deficient part gets protected", "Oxygen-deficient part acts as anode", "Oxygen-rich part acts as anode", "Metal as a whole acts as cathode"], answerIndex: 1 },
+          { text: "Q8: The accelerated corrosion of iron under defective tin coatings is due to ___", options: ["Change in electrode potential", "Acidic environment", "Small cathodic surface area", "Small anodic surface area"], answerIndex: 3 },
+          { text: "Q9: For accelerated corrosion ratio of anodic to cathodic area should be ___", options: ["Greater than 1", "Lesser than 1", "Equal to 1", "Greater than 1.5"], answerIndex: 1 },
+          { text: "Q10: The metal, which is protected by a layer of its own oxide, is ___", options: ["Al", "Pt", "Zn", "Fe"], answerIndex: 0 },
+          { text: "Q11: In general, corrosion is maximum when the pH of the corroding medium is ___", options: ["Above 7.0", "Equal to 7.0", "Below 7.0", "Equal to 10.0"], answerIndex: 2 },
+          { text: "Q12: Identify the correct statement/s", options: ["Only (i)", "Only (ii)", "Both (i) and (ii)", "Neither (i) nor (ii)"], answerIndex: 2 },
+          { text: "Q13: Iron corrodes faster in ___", options: ["Hard water", "Soft water", "Demineralised water", "Distilled water"], answerIndex: 0 },
+          { text: "Q14: CPR is expressed in ___ unit", options: ["mg per year", "mm per year", "mg per hr", "mm per hr"], answerIndex: 1 },
+          { text: "Q15: What is the role of NH4Cl flux during galvanization process?", options: ["Prevents oxidation of Zn", "Prevents oxidation of iron", "Helps to maintain constant bath temperature", "Prevents chemical reaction between Zn and Fe"], answerIndex: 0 },
+          { text: "Q16: In anodic coatings, the coating metals possess ___ reduction potential than base metal", options: ["Higher", "medium", "Lower", "equal"], answerIndex: 2 },
+          { text: "Q17: Anodic metal coating is a process of coating the base metal with ___", options: ["more reactive metal", "inert metal", "less reactive metal", "passive metal"], answerIndex: 0 },
+          { text: "Q18: Chemical conversion coating is ___ type of coating", options: ["Organic", "Inorganic", "Polymer", "Alloy"], answerIndex: 1 },
+          { text: "Q19: Anodization of corrosion control technique is based on the principle of ___", options: ["Chemical coating", "Chemical conversion coating", "Metal coating", "Electroless plating"], answerIndex: 1 },
+          { text: "Q20: Sacrificial anode method is widely used in ships and underground pipelines as ___", options: ["It is highly decorative", "It ensures uniform strength of the material", "It continuously protects the base metal by corroding the anodic metal", "It eliminates the use of anodic metal"], answerIndex: 2 },
+          { text: "Q21: Sacrificial anodes used in cathodic protection of iron are generally made of ___", options: ["Copper, Nickel, Lead", "Magnesium, Zinc, Aluminium", "Carbon, Platinum, Gold", "Iron, Chromium, Silver"], answerIndex: 1 },
+          { text: "Q22: To protect the buried pipeline from corrosion, it is connected to Mg piece through a wire. This process is called as ___", options: ["Impressed current cathodic protection", "Galvanic protection", "Sacrificial cathodic protection", "Sacrificial anodic protection"], answerIndex: 3 },
+          { text: "Q23: Which of the following is not a corrosion prevention technique?", options: ["Sacrificial Anode", "Protective coating", "Pickling", "Anodizing"], answerIndex: 2 },
+          { text: "Q24: In the electroplating process, generally the object to be plated is made as ___", options: ["Anode", "Electrolyte", "Cathode", "Power house"], answerIndex: 2 },
+          { text: "Q25: In electrodeposition process, complexing agents are added to ___", options: ["increase the chemical reaction between the cathode metal and plating ions", "make the potential of the plating ion more negative", "enhance the passivation of anodes", "decrease the throwing power of the plating bath"], answerIndex: 1 },
+          { text: "Q26: The electrolyte commonly used for chromium electroplating is ___", options: ["H₂SO₄", "CrO₃ + H₂SO₄", "CrO₃ + HCl", "HCl solution"], answerIndex: 1 },
+          { text: "Q27: During chromium plating, ___ is used as anode", options: ["Chromium", "Nickel", "Calomel electrode", "Inert electrode"], answerIndex: 3 },
+          { text: "Q28: Chromium anodes are not used in Cr plating because", options: ["Chromium metal passivates strongly in acid sulphate medium", "Chromium metal activates strongly in acid sulphate medium", "Chromium anode gives rise to Cr6+ ions on dissolution", "Chromium metal oxidizes the base component"], answerIndex: 0 },
+          { text: "Q29: Electroless plating is characterized by ___", options: ["The use of an external electrical current", "A chemical reduction process without external current", "Electrodeposition of metals", "The need for a conductive substrate"], answerIndex: 1 },
+          { text: "Q30: Identify the advantage of electroless plating over electroplating technique", options: ["Higher deposition rates", "Better throwing power of the bath solution", "Lower cost", "Easier to control the deposition process"], answerIndex: 1 },
+          { text: "Q31: During the fabrication of PCB, the electroless plating of copper is performed using ___ as reducing agent", options: ["Sodium hypophosphate", "Sodium borohydride", "Hydrazine", "Formaldehyde"], answerIndex: 3 },
+          { text: "Q32: In the production of double-sided printed circuit boards, connection-through-hole is efficiently made by ___", options: ["Electroplating", "Electroless plating", "Molten dip method", "using copper wires"], answerIndex: 1 },
+          { text: "Q33: Which of the following statements is correct regarding the difference between electroless and electrolytic plating?", options: ["Electroless plating includes reduction reaction, while electrolytic plating does not", "Electrolytic plating is a chemical process, while electroless plating is an electrochemical process", "Electroless plating offers more uniform coatings than electrolytic plating", "Electrolytic plating is used for through-hole plating, while electroless plating is not"], answerIndex: 2 },
+          { text: "Q34: Electroless plating is used in the electronics industry for ___", options: ["Creating decorative finishes on electronic components", "Increasing the electrical resistance of circuits", "Creating conductive pathways on printed circuit boards (PCBs)", "Providing corrosion protection for metal components"], answerIndex: 2 },
+          { text: "Q35: In electronics, the abbreviation PCB stands for ___", options: ["Polished Circuit Board", "Printed Circular Board", "Polymer Circuit Board", "Printed Circuit Board"], answerIndex: 3 }
+        ]
+      },
+      {
+        id: 'chem-unit3',
+        name: 'Analytical Techniques, Memory Devices &amp; Display Systems',
+        description: 'Conductometry, potentiometric titration, colorimetry, sensors, memory devices, LCDs, LEDs',
+        level: 'Medium',
+        subject: 'Chemistry',
+        unit: 3,
+        questions: [
+          { text: "Q1: Conductometry is an electrochemical method based on measuring ___", options: ["Resistance", "Dilution", "Absorbance", "Viscosity"], answerIndex: 0 },
+          { text: "Q2: In conductivity cell, cell constant is the ratio of ___", options: ["l/a", "a/l", "l/a²", "a²/l"], answerIndex: 0 },
+          { text: "Q3: ___ is defined as the conductance of a solution containing one mole of an electrolyte", options: ["Specific conductance", "Equivalent conductance", "Molar conductance", "Ionic conductance"], answerIndex: 2 },
+          { text: "Q4: In conductometric titrations of strong acid and strong base, the conductance ___", options: ["First decreases steeply, then rises rapidly", "First rises rapidly, then decreases steeply", "Remains same throughout titration", "Increases gradually"], answerIndex: 0 },
+          { text: "Q5: Conductance of an electrolyte is directly proportional to ___", options: ["Mobility and concentration of ions", "Resistance of the electrolyte", "Voltage applied across the electrolyte", "Temperature of the electrolyte"], answerIndex: 0 },
+          { text: "Q6: During conductometric titration of mixture of strong and weak acid against NaOH, which of the following is true?", options: ["Weak acid will be neutralized first", "Strong acid will be neutralized first", "It depends on relative volumes of strong and weak acid taken", "It depends on relative concentrations of strong and weak acid taken"], answerIndex: 1 },
+          { text: "Q7: In conductometric titrations, the equivalence point is determined graphically by plotting a graph of ___", options: ["Conductance vs Volume of alkali", "Absorbance vs Concentration", "Conductance vs Acid concentration", "Conductance vs EMF"], answerIndex: 0 },
+          { text: "Q8: At half-equivalence point, pH of a weak acid is considered equal to its pKa, because at that point ___", options: ["The acid gets completely neutralized", "The concentrations of salt and acid become equal", "The concentration of the acid is maximum", "The salt concentration is maximum"], answerIndex: 1 },
+          { text: "Q9: In potentiometric titration of FAS against standard K2Cr2O7, sharp increase in potential is observed when:", options: ["All ferric ions are converted into ferrous ions", "50% of ferric ions are converted into ferrous ions", "All ferrous ions are converted into ferric ions", "50% of ferric ions are converted into ferrous ions"], answerIndex: 2 },
+          { text: "Q10: Potentiometric titration involves measurement of ___", options: ["The potential between indicator electrode and reference electrode", "The resistance of an electrolytic solution", "pH of the solution", "Absorbance of the solution"], answerIndex: 0 },
+          { text: "Q11: Identify the correct statement/s", options: ["Only (i)", "(ii) and (iii)", "(i) and (iii)", "(i), (ii) and (iii)"], answerIndex: 0 },
+          { text: "Q12: Deviation from Beer's Lambert law is observed at ___", options: ["Higher concentrations of analytes", "Lower concentrations of analytes", "Colorless analytes", "Colored analytes"], answerIndex: 0 },
+          { text: "Q13: Colorimetric determination of metal is dependent on ___", options: ["Boyle's law", "Planck's law", "Charle's law", "Beer-Lambert law"], answerIndex: 3 },
+          { text: "Q14: In the colorimetric estimation of iron, which reagent forms a red-colored complex with Fe³⁺?", options: ["Ammonia solution", "Potassium thiocyanate", "Acid solution", "Copper sulphate"], answerIndex: 1 },
+          { text: "Q15: Identify the incorrect statement", options: ["Only (i)", "Only (ii)", "Both (i) and (ii)", "Neither (i) nor (ii)"], answerIndex: 0 },
+          { text: "Q16: Compared to chemical analysis, instrumental analysis ___", options: ["Are much slower", "Are much faster", "Requires large amount of analyte", "Are less useful"], answerIndex: 1 },
+          { text: "Q17: Compared to chemical analysis, instrumental analysis requires ___", options: ["Very large amount of analyte", "Very small amount of analyte", "No analyte", "No calibration of instruments"], answerIndex: 1 },
+          { text: "Q18: In an electrochemical sensor, the active component that converts chemical reactions into measurable electrical signals, is called a/an ___", options: ["Receptor", "Amplifier", "Detector", "Transducer"], answerIndex: 3 },
+          { text: "Q19: In industrial settings, oxides of nitrogen and sulphur are commonly detected using ___", options: ["Disposable sensors", "Electrochemical sensors", "Optical sensors", "Thermometric sensors"], answerIndex: 1 },
+          { text: "Q20: What is the key feature of disposable sensors?", options: ["High reusability", "Meant for single-use applications", "Variable accuracy", "Does not suffer from deactivation"], answerIndex: 1 },
+          { text: "Q21: For a material to be suitable for application in memory device, it must not ___", options: ["Switch rapidly between states", "Be sensitive to small voltage changes", "Have unstable states", "Store data for prolonged period"], answerIndex: 2 },
+          { text: "Q22: A PNP junction is normally found in ___ electronic memory device", options: ["Transistor-type", "Capacitor-type", "Resistor-type", "Charge-transfer-type"], answerIndex: 0 },
+          { text: "Q23: Number of terminals needed to construct transistor type electronic memory devices are ___", options: ["1", "3", "6", "2"], answerIndex: 1 },
+          { text: "Q24: The charge-transfer effects observed in the memory device is due to the binding between ___ molecules", options: ["Donor and Acceptor", "Cationic and Anionic", "Diatomic and Polyatomic", "Elemental and Macro"], answerIndex: 0 },
+          { text: "Q25: Identify the incorrect statement", options: ["Pentacene is an acene derivative", "Pentacene structure consists of five fused benzene rings", "Pentacene exhibits very low charge carrier mobility", "Perfluoropentacene behaves as n-type semiconductor"], answerIndex: 2 },
+          { text: "Q26: An example of an organic molecule, which can replace 'n' type semiconductor, is ___", options: ["Benzene", "Pentacene", "Perfluropentacene", "Fluro benzene"], answerIndex: 2 },
+          { text: "Q27: What is the major advantage of organic electronic memory devices?", options: ["High-operating voltage", "Excellent mechanical rigidity", "Flexibility and low-cost fabrication", "Better performance at higher temperature"], answerIndex: 2 },
+          { text: "Q28: Which property of polymers makes them suitable for applications in memory devices?", options: ["High electrical resistance", "Low thermal stability", "Bistable state", "Brittle nature"], answerIndex: 2 },
+          { text: "Q29: Which of the following structural feature is not a necessity for a molecule to exhibit liquid crystalline property?", options: ["Rigid Core", "Heterocyclic moiety", "Flexible end group", "Bridge group"], answerIndex: 1 },
+          { text: "Q30: The orientational behaviour of lyotropic crystals is a function of ___", options: ["Concentration", "Solvent", "Concentration and solvent", "Temperature"], answerIndex: 2 },
+          { text: "Q31: Nematic type of liquid crystal possess ___", options: ["Positional order", "Directional order", "Both positional and directional order", "Neither positional nor directional order"], answerIndex: 1 },
+          { text: "Q32: Which phase of liquid crystals constitute molecules having twisted helical structure?", options: ["Nematic", "Isotropic", "Smectic", "Cholesteric"], answerIndex: 3 },
+          { text: "Q33: Which liquid crystal shows layered molecular arrangement?", options: ["Nematic", "Twisted Nematic", "Smectic", "Discotic"], answerIndex: 2 },
+          { text: "Q34: Which liquid crystal is most commonly employed in LCD technology?", options: ["Nematic", "Twisted Nematic", "Smectic", "Discotic"], answerIndex: 1 },
+          { text: "Q35: In LCD units, liquid crystals act as wave guide by tilting the plane of polarized light by ___", options: ["45°", "60°", "90°", "120°"], answerIndex: 2 },
+          { text: "Q36: Identify the correct statement/s", options: ["Only (i)", "Only (ii)", "Both (i) and (ii)", "Neither (i) nor (ii)"], answerIndex: 2 },
+          { text: "Q37: A numeric liquid crystal display has ___ segments", options: ["Thirty-two", "Sixteen", "Eight", "Seven"], answerIndex: 3 },
+          { text: "Q38: Working principle of LED is ___", options: ["Photo-luminescence", "Chemi-luminescence", "Electrooptic effect", "Electro-luminescence"], answerIndex: 3 },
+          { text: "Q39: In organic light-emitting diodes, organic molecules replace ___", options: ["The anode", "The cathode", "Both anode and cathode", "Semiconducting materials"], answerIndex: 3 },
+          { text: "Q40: The color emitted by a quantum dot depends mainly on ___", options: ["Applied voltage", "Operating temperature", "Size of the quantum dots", "Overall thickness of the apparatus"], answerIndex: 2 }
+        ]
+      },
+      {
+        id: 'chem-unit4',
+        name: 'Polymers and Nanomaterials',
+        description: 'Polymerization, thermoplastics, conducting polymers, nanomaterials, synthesis techniques',
+        level: 'Medium',
+        subject: 'Chemistry',
+        unit: 4,
+        questions: [
+          { text: "Q1: The total number of functional groups in a monomer molecule is called ___", options: ["Degree of Polymerization", "Cross-linking", "Functionality", "Reactivity"], answerIndex: 2 },
+          { text: "Q2: Bifunctionality required for addition polymerization is provided by ___", options: ["Unsaturation present in the monomer", "Two functional groups present in monomer", "Catalyst", "One functional group present in monomer"], answerIndex: 0 },
+          { text: "Q3: ___ is defined as the number of repeating units in a polymer chain", options: ["Functionality", "Degree of Polymerization", "Molecular Weight", "Monomer"], answerIndex: 1 },
+          { text: "Q4: Nylon 6.6 can be prepared by ___", options: ["Addition polymerization", "Coordination polymerization", "Condensation polymerization", "Co-polymerization"], answerIndex: 2 },
+          { text: "Q5: Vinyl compounds are ___", options: ["Bifunctional monomers", "Trifunctional monomers", "Polymers", "Not example for monomers"], answerIndex: 0 },
+          { text: "Q6: The chemical process by which monomers are converted into polymers is called ___", options: ["Initiation", "Propagation", "Polymerization", "Substitution"], answerIndex: 2 },
+          { text: "Q7: Which is an example of monomer?", options: ["Ethane", "Ethyl chloride", "Ethene", "Ethyl alcohol"], answerIndex: 2 },
+          { text: "Q8: Identify the incorrect statement", options: ["Functionality of phenol is 3", "Functionality of adipic acid is 2", "Functionality of ethene is 2", "Functionality of ethanol is 2"], answerIndex: 3 },
+          { text: "Q9: Polymers that soften on heating and harden on cooling are called ___", options: ["Thermoplastics", "Elastomers", "Thermosetting polymers", "Resins"], answerIndex: 0 },
+          { text: "Q10: What is responsible for the plasticity observed in thermoplastics?", options: ["Strong covalent bonds between polymer chains", "Weak secondary forces between polymer chains", "Cross-linking of the polymer chains", "Conjugation in the polymer backbone"], answerIndex: 1 },
+          { text: "Q11: Polymer composites are a blend of ___", options: ["Polymer &amp; Metal", "Polymer &amp; Fiber", "Polymer &amp; Glass", "Polymer &amp; Elastomer"], answerIndex: 1 },
+          { text: "Q12: Which material is typically used to bind carbon fibers together in a composite?", options: ["Glass", "Rubber", "Plastic polymer resin", "Metal alloy"], answerIndex: 2 },
+          { text: "Q13: Which polymer is widely used as the precursor for preparing carbon fiber?", options: ["Polyethylene", "Polyacrylonitrile", "Polystyrene", "Polyvinyl chloride"], answerIndex: 1 },
+          { text: "Q14: During the preparation of carbon fiber, at what temperature hydrogen gets expelled to form aromatic rings?", options: ["200-300 ºC", "600–700 ºC", "1000-1500 ºC", "2000-2500 ºC"], answerIndex: 1 },
+          { text: "Q15: Why does undoped polyacetylene behave as an insulator?", options: ["It has a high density of free electrons", "It is not crystalline", "It has a relatively large bandgap", "It lacks extensive conjugation"], answerIndex: 2 },
+          { text: "Q16: Which of the following acts as a p-type dopant for polyacetylene?", options: ["Sodium naphthalide", "Hydrogen peroxide", "Polyacrylonitrile (PAN)", "Iodine (I₂)"], answerIndex: 3 },
+          { text: "Q17: In oxidative doping of polyacetylene, species responsible for conduction are ___", options: ["Delocalized positive charges", "Delocalized negative charges", "Both positive and negative charges", "Dopant anions"], answerIndex: 0 },
+          { text: "Q18: In reductive doping of polyacetylene, species responsible for conduction are ___", options: ["Delocalized positive charges", "Delocalized negative charges", "Both positive and negative charges", "Dopant anions"], answerIndex: 1 },
+          { text: "Q19: Carbon fiber composites are preferred in aerospace because ___", options: ["They are cheap and biodegradable", "They have high strength and low density", "They have high solubility in solvents", "They are elastic"], answerIndex: 1 },
+          { text: "Q20: With respect to the conductivity observed in doped polyacetylene, which of the following statements holds true for the soliton band?", options: ["It lies below the valence band", "It is formed only during oxidative doping", "It disappears upon doping", "It creates energy states within the band gap"], answerIndex: 3 },
+          { text: "Q21: 1 nm = ___", options: ["10⁻⁷ m", "10⁻⁹ m", "10⁹ m", "10⁻³ m"], answerIndex: 1 },
+          { text: "Q22: Materials having two dimensions in the nanoscale are called ___ nanomaterials", options: ["Zero Dimensional", "One Dimensional", "Two Dimensional", "Three Dimensional"], answerIndex: 1 },
+          { text: "Q23: An example for zero-dimensional nanomaterials is ___", options: ["Nanosheets", "Nanotubes", "Nanospheres", "Nanowires"], answerIndex: 2 },
+          { text: "Q24: An example for one-dimensional nanomaterials is ___", options: ["Nanosheets", "Nanoplates", "Nanospheres", "Nanowires"], answerIndex: 3 },
+          { text: "Q25: An example for two-dimensional nanomaterials is ___", options: ["Nanosheets", "Nanotubes", "Nanospheres", "Nanowires"], answerIndex: 0 },
+          { text: "Q26: Which of the following property is responsible for makes nanomaterials good catalysts?", options: ["Increased volume", "Increase in melting point", "Increase in surface area to volume ratio", "Increased conductance"], answerIndex: 2 },
+          { text: "Q27: Photolithography technique for synthesis of nanomaterials makes use of ___", options: ["UV radiation", "IR radiation", "Visible radiation", "Solar radiation"], answerIndex: 0 },
+          { text: "Q28: Identify the incorrect statement regarding the use of photoresists in photolithography", options: ["Negative photoresist leads to the removal of exposed material in the developer", "Positive photoresist dissolves the exposed material in the developer", "Negative photoresist polymerizes and hardens on exposure to UV light", "Positive photoresist dissolves on exposure to UV light"], answerIndex: 0 },
+          { text: "Q29: In photolithography, silica wafers are coated with photoresistor by ___ technique", options: ["Dip coating", "Spin coating", "Painting", "Spray coating"], answerIndex: 1 },
+          { text: "Q30: Identify the correct sequence of events in photolithography", options: ["Cleaning – Development – UV exposure – Photoresist application - Etching", "Cleaning – Photoresist application – UV exposure - Development - Etching", "Cleaning – Photoresist application – UV exposure – Etching - Development", "Cleaning – UV exposure - Development – Etching – Photoresist application"], answerIndex: 1 },
+          { text: "Q31: Precursor used in sol-gel synthesis of silica is ___", options: ["Silicon hydride", "Silica", "Silicon alkoxides", "Pure Silicon"], answerIndex: 2 },
+          { text: "Q32: Choose the INCORRECT statement for the sol-gel method of nanoparticle synthesis", options: ["Sol is a stable suspension of colloidal particles in a liquid", "Metal alkoxides are the preferred precursors in sol-gel process", "The aerogel formation is pressure-driven and not temperature-driven", "The gel is formed by the polymerization reaction"], answerIndex: 2 },
+          { text: "Q33: CVD stands for ___", options: ["Carbon Vapor Dissolution", "Chemical Vapor Deposition", "Carbon Vapor Deposition", "Chemical Vapor Dissolution"], answerIndex: 1 },
+          { text: "Q34: ___ is the carbon source used in the synthesis of carbon nanotubes by CVD technique", options: ["Nitrogen gas", "Argon gas", "Hydrocarbon gas", "Hydrogen gas"], answerIndex: 2 },
+          { text: "Q35: CVD technique involves ___", options: ["Growth of solid structures from solid precursors", "Growth of solid structures from gaseous precursors", "Growth of solid structures from solid precursors", "Growth of solid structures from molten metal solutions"], answerIndex: 1 },
+          { text: "Q36: What is the purpose of purging hydrogen gas during CNT synthesis via CVD technique?", options: ["It helps in reducing the catalyst particles and prevents oxidation", "It can convert multi-walled CNT to single-walled CNT", "It acts as a precursor for CNT formation", "It helps in maintaining the temperature of the reaction chamber"], answerIndex: 0 }
+        ]
+      },
+      {
+        id: 'chem-unit5',
+        name: 'E-Waste Management',
+        description: 'E-waste sources, recycling methods, metal recovery, pyrometallurgy, hydrometallurgy',
+        level: 'Medium',
+        subject: 'Chemistry',
+        unit: 5,
+        questions: [
+          { text: "Q1: Which of the following is not a source of e-waste?", options: ["Plastic bottles", "Printer", "Fluorescent lamps", "Laptops"], answerIndex: 0 },
+          { text: "Q2: Choose the incorrect statement about e-waste", options: ["e-waste refers to electronic wastes", "e-waste comprises of only toxic substances", "It is possible to extract gold from e-waste", "e-waste can cause soil pollution"], answerIndex: 1 },
+          { text: "Q3: Recycling of e-waste has a direct impact on ___", options: ["Environment", "Economy", "Both environment and economy", "Neither environment nor economy"], answerIndex: 2 },
+          { text: "Q4: Which is an example of halogenated compound found in e-waste?", options: ["Cd", "Toner dust", "CRT", "CFC"], answerIndex: 3 },
+          { text: "Q5: What is the ill-effect of CFC emission?", options: ["It causes lung cancer", "It results in cardiac failure", "It obscures vision", "It accumulates in stratosphere and depletes ozone"], answerIndex: 3 },
+          { text: "Q6: The metal ions released from e-waste can prove hazardous to human health due to their ___", options: ["easy bioaccumulation", "inert nature", "tendency to undergo reduction", "optical nature"], answerIndex: 0 },
+          { text: "Q7: Cadmium present in e-waste mainly affects ___", options: ["Kidney and nervous system", "Bone and tooth", "Skin", "Digestive system"], answerIndex: 0 },
+          { text: "Q8: Which is the first step of e-waste recycling?", options: ["Chemical dissolution", "Physical separation", "Biological treatment", "Thermal exposure"], answerIndex: 1 },
+          { text: "Q9: Which of the following technique is not included during pretreatment of e-waste?", options: ["Mechanical grinding", "Treatment with leaching agents", "Sedimentation", "Magnetic separation"], answerIndex: 1 },
+          { text: "Q10: Magnetic separation of pretreatment enables separation of ___", options: ["Noble metals from plastics", "Glass wastes from plastics", "Non-ferrous metals from plastics", "Ferrous metals from non-ferrous metals"], answerIndex: 3 },
+          { text: "Q11: Direct combustion of e-waste is ___", options: ["Safe and environment friendly", "Neither safe nor environment friendly", "A high cost-technique", "Safe but not environment friendly"], answerIndex: 1 },
+          { text: "Q12: Arrange the following processes used during e-waste management in the correct sequence", options: ["(i), (ii) &amp; (iii)", "(ii), (iii) &amp; (i)", "(iii), (i) &amp; (ii)", "(ii), (i) &amp; (iii)"], answerIndex: 1 },
+          { text: "Q13: Which of the following is not a type of thermal treatment method?", options: ["Combustion", "Sintering", "Extraction", "Incineration"], answerIndex: 2 },
+          { text: "Q14: Which of the following method is carried out in the absence of oxygen?", options: ["Pyrolysis", "Gasification", "Combustion", "Incineration"], answerIndex: 0 },
+          { text: "Q15: What is the disadvantage of thermal treatment?", options: ["It is a simple and cheaper method of waste disposal", "It releases large amount of carcinogens in the atmosphere", "It helps in quick reduction in waste volume", "It is easily adaptable"], answerIndex: 1 },
+          { text: "Q16: Pyrometallurgy of e-waste treatment involves action of ___", options: ["Pressure", "Heat", "Chemicals", "Bio-chemicals"], answerIndex: 1 },
+          { text: "Q17: During copper smelting process (extraction from ores), the slurry will be rich in ___", options: ["Copper", "Precious metals such Pt, Sb, etc", "Sand granules", "Plastic particulates"], answerIndex: 1 },
+          { text: "Q18: In molten salt process, e-waste are treated with ___", options: ["Organic solvents", "Inorganic salts", "Molten mercury", "Organic heterocyclic compounds"], answerIndex: 1 },
+          { text: "Q19: Hydrometallurgy involves treating e-waste with ___", options: ["Water", "Leaching agents", "Organic solvents", "Ionic liquids"], answerIndex: 1 },
+          { text: "Q20: Most preferred leaching agent for recovery of lithium is ___", options: ["Cyanides", "Thiosulphate", "Acid", "Thio urea"], answerIndex: 2 },
+          { text: "Q21: Which are the two stages of hydrometallurgy?", options: ["Leaching and electrodeposition", "Electrodeposition and recover", "Leaching and recovery", "Extraction and leaching"], answerIndex: 2 },
+          { text: "Q22: Which of the following method is not a part of pyrometallurgical treatment of e-wastes?", options: ["Smelting", "Incineration", "Pyrolysis", "Filtration"], answerIndex: 3 },
+          { text: "Q23: Identify the incorrect statement", options: ["Pyrometallurgy involves high temperature treatment", "Combustion is reduction at room temperature", "Leaching involves conversion of metals into soluble salts or complexes", "Pyrolysis is undertaken in the absence of oxygen"], answerIndex: 1 },
+          { text: "Q24: Extraction of metals by treatment with HCl is called as ___ leaching", options: ["Cyanide", "thioruea", "Acid", "thiosulphate"], answerIndex: 2 },
+          { text: "Q25: Which of the following method is not suitable for gold extraction?", options: ["Cyanide leaching", "Metal leaching", "Halide leaching", "Thiosulphate leaching"], answerIndex: 1 },
+          { text: "Q26: Which leaching agent is commonly employed for gold recovery from e-waste?", options: ["Aqua regia or cyanides", "Strong ammoniacal solution", "Mild organic acids", "Mixture of ionic salt and weak base"], answerIndex: 0 },
+          { text: "Q27: During thiourea leaching, ___ reaction takes place between the metal ion and thiourea", options: ["Repulsion", "Neutralization", "Substitution", "Complexation"], answerIndex: 3 },
+          { text: "Q28: ___ is a metal recovery process consisting of transfer of metal ions from inorganic to organic phase", options: ["Solvent Extraction", "Adsorption", "Ion exchange", "Electrodeposition"], answerIndex: 0 },
+          { text: "Q29: Which of the following statement is not true for ion exchange process?", options: ["It is an extension of solvent extraction method", "The exchange reaction occurs on the surface of polymer beads", "The method is not selective", "It is an environment-friendly method"], answerIndex: 2 },
+          { text: "Q30: In solvent extraction of metal recovery of e-waste, leached solutions are treated with ___", options: ["Excess water", "Concentrated acids", "Concentrated alkalis", "Organic solvents"], answerIndex: 3 },
+          { text: "Q31: Utilization of activated charcoal is effective for ___ process", options: ["solvent Extraction", "adsorption", "ion exchange", "electrodeposition"], answerIndex: 1 },
+          { text: "Q32: In the ion exchange process used for metal recovery, which of the following is true?", options: ["Not environment friendly", "Highly selective", "Needs high concentration of ions", "Needs high temperature"], answerIndex: 1 },
+          { text: "Q33: Chose the correct statement", options: ["Metal recovered by electrodeposition method is of high purity", "During ion exchange, the metal ions bind to the polymeric functional groups by hydrogen bonding", "Solvent extraction is a three-phase system", "Activated charcoal has the least tendency to behave as metal adsorbent"], answerIndex: 0 },
+          { text: "Q34: ___ metal is taken as cathode during gold recovery by electro-deposition", options: ["Pt", "Cu", "Au", "Co"], answerIndex: 2 },
+          { text: "Q35: During the electrodeposition process in e-waste recovery, the recovered metal ___", options: ["Gets released from the anode", "Gets deposited on the cathode", "Increases the potential of the process", "Gets converted to its metal oxide"], answerIndex: 1 },
+          { text: "Q36: CPCB and SPCB are part of ___", options: ["Producer assets", "Consumer groups", "Recycling companies", "Statutory government regulatory bodies"], answerIndex: 3 },
+          { text: "Q37: As a stakeholder for e-waste management, which of the following is not the responsibility of a recycler?", options: ["Collection of e-waste", "Registering themselves with SPCB", "Formulation of legal frameworks", "Following the standard norms of recycling"], answerIndex: 2 },
+          { text: "Q38: Who, among the following, frames the guidelines for e-waste disposal and recycling?", options: ["CPCB", "Producers", "Consumers", "Recyclers"], answerIndex: 0 },
+          { text: "Q39: A responsible consumer must not ___", options: ["Segregate the e-waste from regular wastes", "Frequently purchase excessive electronic devices", "Be aware of the regulations on e-waste disposal", "Encourage others to recycle e-wastes scientifically"], answerIndex: 1 }
+        ]
+      }
+    ];
+
+    // Application State (in-memory storage)
+    let currentQuiz = null;
+    let currentQuestionIndex = 0;
+    let userAnswers = [];
+    let quizResults = {}; // Stores completion data: { quizId: { score, total, percentage, passed, timeTaken } }
+    let timerInterval = null;
+    let startTime = null;
+    let elapsedSeconds = 0;
+
+    // DOM Elements
+    const subjectFilter = document.getElementById('subject-filter');
+    const unitFilter = document.getElementById('unit-filter');
+    const quizzesList = document.getElementById('quizzes-list');
+    const tabs = document.querySelectorAll('.tab');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+    const quizContent = document.getElementById('quiz-content');
+    const progressContent = document.getElementById('progress-content');
+
+    // Initialize App
+    function init() {
+      renderQuizzesList();
+      setupEventListeners();
+      updateUnitFilter();
+    }
+
+    // Setup Event Listeners
+    function setupEventListeners() {
+      subjectFilter.addEventListener('change', () => {
+        updateUnitFilter();
+        renderQuizzesList();
+      });
+
+      unitFilter.addEventListener('change', renderQuizzesList);
+
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const targetTab = tab.dataset.tab;
+          switchTab(targetTab);
+        });
+      });
+    }
+
+    // Switch Tabs
+    function switchTab(tabName) {
+      tabs.forEach(tab => {
+        if (tab.dataset.tab === tabName) {
+          tab.classList.add('active');
+        } else {
+          tab.classList.remove('active');
+        }
+      });
+
+      tabPanes.forEach(pane => {
+        if (pane.id === `${tabName}-tab`) {
+          pane.classList.add('active');
+        } else {
+          pane.classList.remove('active');
+        }
+      });
+
+      if (tabName === 'progress') {
+        renderProgressTab();
+      }
+    }
+
+    // Update Unit Filter based on Selected Subject
+    function updateUnitFilter() {
+      const selectedSubject = subjectFilter.value;
+      const units = new Set();
+
+      quizData.forEach(quiz => {
+        if (selectedSubject === 'all' || quiz.subject === selectedSubject) {
+          units.add(quiz.unit);
+        }
+      });
+
+      unitFilter.innerHTML = '<option value="all">All Units</option>';
+      Array.from(units).sort((a, b) => a - b).forEach(unit => {
+        const option = document.createElement('option');
+        option.value = unit;
+        option.textContent = `Unit ${unit}`;
+        unitFilter.appendChild(option);
+      });
+    }
+
+    // Render Quizzes List
+    function renderQuizzesList() {
+      const selectedSubject = subjectFilter.value;
+      const selectedUnit = unitFilter.value;
+
+      const filteredQuizzes = quizData.filter(quiz => {
+        const subjectMatch = selectedSubject === 'all' || quiz.subject === selectedSubject;
+        const unitMatch = selectedUnit === 'all' || quiz.unit === parseInt(selectedUnit);
+        return subjectMatch && unitMatch;
+      });
+
+      quizzesList.innerHTML = '';
+
+      filteredQuizzes.forEach(quiz => {
+        const quizItem = document.createElement('div');
+        quizItem.className = 'quiz-item';
+        if (currentQuiz && currentQuiz.id === quiz.id) {
+          quizItem.classList.add('active');
+        }
+
+        const subjectColor = subjectColors[quiz.subject];
+        
+        quizItem.innerHTML = `
+          <div class="quiz-item-header">
+            <div class="quiz-item-title">${quiz.name}</div>
+          </div>
+          <div class="quiz-item-description">${quiz.description}</div>
+          <div class="quiz-item-meta">
+            <span class="badge badge-subject" style="background-color: ${subjectColor.background}; color: ${subjectColor.primary};">${quiz.subject}</span>
+            <span class="badge badge-unit">Unit ${quiz.unit}</span>
+            <span class="badge badge-questions">${quiz.questions.length}Q</span>
+          </div>
+        `;
+
+        quizItem.addEventListener('click', () => selectQuiz(quiz));
+        quizzesList.appendChild(quizItem);
+      });
+    }
+
+    // Select Quiz
+    function selectQuiz(quiz) {
+      currentQuiz = quiz;
+      currentQuestionIndex = 0;
+      userAnswers = new Array(quiz.questions.length).fill(null);
+      stopTimer();
+      elapsedSeconds = 0;
+
+      // Update active state in sidebar
+      document.querySelectorAll('.quiz-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      event.currentTarget.classList.add('active');
+
+      // Check if quiz is already completed
+      if (quizResults[quiz.id]) {
+        renderCompletedQuizPreview();
+      } else {
+        renderQuizPreview();
+      }
+
+      // Switch to Quiz tab if not already there
+      switchTab('quiz');
+    }
+
+    // Render Quiz Preview (before starting)
+    function renderQuizPreview() {
+      quizContent.innerHTML = `
+        <div class="quiz-header">
+          <h2 class="quiz-title">${currentQuiz.name}</h2>
+        </div>
+        <div class="question-card">
+          <div class="question-text">Ready to test your knowledge?</div>
+          <p style="color: var(--text-secondary); margin-bottom: var(--space-24);">
+            This quiz contains ${currentQuiz.questions.length} questions. Click "Start Quiz" to begin.
+          </p>
+          <div class="controls">
+            <button class="btn btn-primary" onclick="startQuiz()">Start Quiz</button>
+          </div>
+        </div>
+      `;
+    }
+
+    // Render Completed Quiz Preview
+    function renderCompletedQuizPreview() {
+      const result = quizResults[currentQuiz.id];
+      const passed = result.passed;
+      const statusClass = passed ? 'success' : 'error';
+      const statusText = passed ? 'Passed' : 'Failed';
+
+      const minutes = Math.floor(result.timeTaken / 60);
+      const seconds = result.timeTaken % 60;
+      const timeText = `${minutes} minute${minutes !== 1 ? 's' : ''} ${seconds} second${seconds !== 1 ? 's' : ''}`;
+
+      quizContent.innerHTML = `
+        <div class="quiz-header">
+          <h2 class="quiz-title">${currentQuiz.name}</h2>
+        </div>
+        <div class="summary-box">
+          <h3 class="summary-title">Previous Result</h3>
+          <div class="summary-stats">
+            <div class="stat-item">
+              <div class="stat-label">Score</div>
+              <div class="stat-value">${result.score}/${result.total}</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Percentage</div>
+              <div class="stat-value">${result.percentage}%</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Status</div>
+              <div class="stat-value ${statusClass}">${statusText}</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Time</div>
+              <div class="stat-value">${timeText}</div>
+            </div>
+          </div>
+          <div class="controls">
+            <button class="btn btn-primary" onclick="retakeQuiz()">Retake Quiz</button>
+          </div>
+        </div>
+      `;
+    }
+
+    // Start Quiz
+    function startQuiz() {
+      currentQuestionIndex = 0;
+      userAnswers = new Array(currentQuiz.questions.length).fill(null);
+      startTimer();
+      renderQuestion();
+    }
+
+    // Retake Quiz
+    function retakeQuiz() {
+      startQuiz();
+    }
+
+    // Start Timer
+    function startTimer() {
+      startTime = Date.now();
+      elapsedSeconds = 0;
+      timerInterval = setInterval(() => {
+        elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+        updateTimerDisplay();
+      }, 1000);
+    }
+
+    // Stop Timer
+    function stopTimer() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+    }
+
+    // Update Timer Display
+    function updateTimerDisplay() {
+      const timerElement = document.getElementById('timer-display');
+      if (timerElement) {
+        const minutes = Math.floor(elapsedSeconds / 60);
+        const seconds = elapsedSeconds % 60;
+        timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+      }
+    }
+
+    // Render Question
+    function renderQuestion() {
+      const question = currentQuiz.questions[currentQuestionIndex];
+      const isLastQuestion = currentQuestionIndex === currentQuiz.questions.length - 1;
+
+      const minutes = Math.floor(elapsedSeconds / 60);
+      const seconds = elapsedSeconds % 60;
+
+      quizContent.innerHTML = `
+        <div class="quiz-header">
+          <h2 class="quiz-title">${currentQuiz.name}</h2>
+          <div style="display: flex; gap: var(--space-12); align-items: center;">
+            <div class="timer">
+              <span>⏱️</span>
+              <span id="timer-display">${minutes}:${seconds.toString().padStart(2, '0')}</span>
+            </div>
+            <div class="progress-badge">${currentQuestionIndex + 1}/${currentQuiz.questions.length}</div>
+          </div>
+        </div>
+        <div class="question-card">
+          <div class="question-text">${question.text}</div>
+          <div class="options-list">
+            ${question.options.map((option, index) => `
+              <div class="option-item ${userAnswers[currentQuestionIndex] === index ? 'selected' : ''}" onclick="selectOption(${index})">
+                <input type="radio" name="question" id="option-${index}" value="${index}" ${userAnswers[currentQuestionIndex] === index ? 'checked' : ''}>
+                <label for="option-${index}">${option}</label>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        <div class="controls">
+          <button class="btn btn-secondary" onclick="resetQuiz()">Reset Quiz</button>
+          <button class="btn btn-primary" onclick="${isLastQuestion ? 'submitQuiz()' : 'nextQuestion()'}" ${userAnswers[currentQuestionIndex] === null ? 'disabled' : ''}>
+            ${isLastQuestion ? 'Submit Quiz' : 'Next Question'}
+          </button>
+        </div>
+      `;
+    }
+
+    // Select Option
+    function selectOption(optionIndex) {
+      userAnswers[currentQuestionIndex] = optionIndex;
+      renderQuestion();
+    }
+
+    // Next Question
+    function nextQuestion() {
+      if (currentQuestionIndex < currentQuiz.questions.length - 1) {
+        currentQuestionIndex++;
+        renderQuestion();
+      }
+    }
+
+    // Submit Quiz
+    function submitQuiz() {
+      stopTimer();
+      const score = calculateScore();
+      const total = currentQuiz.questions.length;
+      const percentage = Math.round((score / total) * 100);
+      const passed = percentage >= 50;
+
+      // Store results
+      quizResults[currentQuiz.id] = {
+        score,
+        total,
+        percentage,
+        passed,
+        timeTaken: elapsedSeconds
+      };
+
+      renderSummary(score, total, percentage, passed);
+    }
+
+    // Calculate Score
+    function calculateScore() {
+      let score = 0;
+      currentQuiz.questions.forEach((question, index) => {
+        if (userAnswers[index] === question.answerIndex) {
+          score++;
+        }
+      });
+      return score;
+    }
+
+    // Render Summary
+    function renderSummary(score, total, percentage, passed) {
+      const statusClass = passed ? 'success' : 'error';
+      const statusText = passed ? 'Passed' : 'Failed';
+
+      const minutes = Math.floor(elapsedSeconds / 60);
+      const seconds = elapsedSeconds % 60;
+      const timeText = `${minutes} minute${minutes !== 1 ? 's' : ''} ${seconds} second${seconds !== 1 ? 's' : ''}`;
+
+      quizContent.innerHTML = `
+        <div class="quiz-header">
+          <h2 class="quiz-title">${currentQuiz.name}</h2>
+        </div>
+        <div class="summary-box">
+          <h3 class="summary-title">Quiz Complete!</h3>
+          <div class="summary-stats">
+            <div class="stat-item">
+              <div class="stat-label">Score</div>
+              <div class="stat-value">${score}/${total}</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Percentage</div>
+              <div class="stat-value">${percentage}%</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Status</div>
+              <div class="stat-value ${statusClass}">${statusText}</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Time</div>
+              <div class="stat-value">${timeText}</div>
+            </div>
+          </div>
+          <div class="controls">
+            <button class="btn btn-secondary" onclick="backToQuizList()">Back to Quizzes</button>
+            <button class="btn btn-primary" onclick="resetQuiz()">Retake Quiz</button>
+          </div>
+        </div>
+      `;
+    }
+
+    // Reset Quiz
+    function resetQuiz() {
+      stopTimer();
+      elapsedSeconds = 0;
+      currentQuestionIndex = 0;
+      userAnswers = new Array(currentQuiz.questions.length).fill(null);
+      renderQuizPreview();
+    }
+
+    // Back to Quiz List
+    function backToQuizList() {
+      currentQuiz = null;
+      stopTimer();
+      quizContent.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">📝</div>
+          <div class="empty-state-title">Select a Quiz to Begin</div>
+          <p>Choose a quiz from the sidebar to start your learning journey</p>
+        </div>
+      `;
+      renderQuizzesList();
+    }
+
+    // Render Progress Tab
+    function renderProgressTab() {
+      const subjectProgress = {};
+
+      // Calculate progress by subject
+      quizData.forEach(quiz => {
+        if (!subjectProgress[quiz.subject]) {
+          subjectProgress[quiz.subject] = {
+            total: 0,
+            completed: 0,
+            passed: 0,
+            failed: 0
+          };
+        }
+        subjectProgress[quiz.subject].total++;
+
+        if (quizResults[quiz.id]) {
+          subjectProgress[quiz.subject].completed++;
+          if (quizResults[quiz.id].passed) {
+            subjectProgress[quiz.subject].passed++;
+          } else {
+            subjectProgress[quiz.subject].failed++;
+          }
+        }
+      });
+
+      // Filter subjects with attempted quizzes
+      const attemptedSubjects = Object.keys(subjectProgress).filter(
+        subject => subjectProgress[subject].completed > 0
+      );
+
+      if (attemptedSubjects.length === 0) {
+        progressContent.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📊</div>
+            <div class="empty-state-title">No Progress Yet</div>
+            <p>Complete some quizzes to see your progress here</p>
+          </div>
+        `;
+        return;
+      }
+
+      progressContent.innerHTML = '';
+
+      attemptedSubjects.forEach(subject => {
+        const progress = subjectProgress[subject];
+        const percentage = Math.round((progress.completed / progress.total) * 100);
+        const subjectColor = subjectColors[subject];
+
+        const card = document.createElement('div');
+        card.className = 'progress-card';
+        card.innerHTML = `
+          <div class="progress-card-header">
+            <div class="progress-card-title">
+              <span class="badge badge-subject" style="background-color: ${subjectColor.background}; color: ${subjectColor.primary}; margin-right: var(--space-8);">${subject}</span>
+            </div>
+            <div class="progress-counter">${progress.completed}/${progress.total}</div>
+          </div>
+          <div class="progress-bar-container">
+            <div class="progress-bar" style="width: ${percentage}%; background-color: ${subjectColor.primary};"></div>
+          </div>
+          <div class="progress-percentage">${percentage}% complete • ${progress.passed} passed • ${progress.failed} failed</div>
+        `;
+        progressContent.appendChild(card);
+      });
+    }
+
+    // Initialize the application
+    init();
+  </script>
+
+<script>
+// --- Review Section Functionality Added ---
+function renderReviewSection() {
+  if (!currentQuiz) return;
+
+  const reviewDiv = document.createElement('div');
+  reviewDiv.className = 'review-section';
+  reviewDiv.innerHTML = `<h2 style="margin-bottom:20px">Review Answers</h2>`;
+
+  currentQuiz.questions.forEach((q, i) => {
+    const userAnswer = userAnswers[i];
+    const isCorrect = userAnswer === q.answerIndex;
+
+    const qDiv = document.createElement('div');
+    qDiv.className = 'review-question ' + (isCorrect ? 'correct-answer' : 'wrong-answer');
+
+    qDiv.innerHTML = `
+      <p style="font-weight:600; margin-bottom:8px;">${q.text}</p>
+      <p><strong>Your answer:</strong> ${q.options[userAnswer] ?? "No answer"}</p>
+      <p><strong>Correct answer:</strong> ${q.options[q.answerIndex]}</p>
+    `;
+
+    reviewDiv.appendChild(qDiv);
+  });
+
+  document.querySelector('#quiz-content').appendChild(reviewDiv);
+}
+
+const origSummary = renderQuizSummary;
+renderQuizSummary = function () {
+  origSummary();
+  renderReviewSection();
+};
+</script>
+
+</body>
+</html>
